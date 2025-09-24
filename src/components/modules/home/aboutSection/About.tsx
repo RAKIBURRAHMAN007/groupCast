@@ -1,6 +1,7 @@
 import React from "react";
-import Chatbubble from "./Chatbubble";
+
 import AIResumeBuilder from "./AIResumeBuilder";
+import FeatureBubbles from "./FeatureBubbles";
 
 const About = () => {
   return (
@@ -102,7 +103,7 @@ const About = () => {
           />
         </div>
       </section>
-      <Chatbubble></Chatbubble>
+      <FeatureBubbles></FeatureBubbles>
       <AIResumeBuilder></AIResumeBuilder>
     </section>
   );
