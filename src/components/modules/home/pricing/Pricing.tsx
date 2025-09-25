@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import img from "../../../../assets/marie.png";
 const Pricing = () => {
   const [active, setActive] = useState("monthly");
   return (
@@ -173,7 +173,7 @@ const Pricing = () => {
             within weeks.
           </h1>
           <div className="flex justify-center mt-1">
-            <img className="rounded-full" src="/src/assets/marie.png" alt="" />
+            <img className="rounded-full" src={img} alt="" />
             <p className="text-sm">Sophie C, Pro Customer</p>
           </div>
         </div>
