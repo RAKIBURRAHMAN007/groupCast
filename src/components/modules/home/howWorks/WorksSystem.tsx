@@ -1,4 +1,9 @@
-import React from "react";
+import uploadImg from "../../../../assets/upload.png";
+import analysisImg from "../../../../assets/analysis.png";
+import targetImg from "../../../../assets/target.png";
+import conceptImg from "../../../../assets/concept.png";
+import atsImg from "../../../../assets/ats.png";
+import applyImg from "../../../../assets/apply.png";
 
 const WorksSystem = () => {
   return (
@@ -14,7 +19,7 @@ const WorksSystem = () => {
               1
             </div>
             <div>
-              <img src="/src/assets/upload.png" alt="" />
+              <img src={uploadImg} alt="" />
             </div>
           </div>
           <div>
@@ -31,7 +36,7 @@ const WorksSystem = () => {
               2
             </div>
             <div>
-              <img src="/src/assets/analysis.png" alt="" />
+              <img src={analysisImg} alt="" />
             </div>
           </div>
           <div>
@@ -48,7 +53,7 @@ const WorksSystem = () => {
               3
             </div>
             <div>
-              <img src="/src/assets/target.png" alt="" />
+              <img src={targetImg} alt="" />
             </div>
           </div>
           <div>
@@ -65,7 +70,7 @@ const WorksSystem = () => {
               4
             </div>
             <div>
-              <img src="/src/assets/concept.png" alt="" />
+              <img src={conceptImg} alt="" />
             </div>
           </div>
           <div>
@@ -81,7 +86,7 @@ const WorksSystem = () => {
               5
             </div>
             <div>
-              <img src="/src/assets/ats.png" alt="" />
+              <img src={atsImg} alt="" />
             </div>
           </div>
           <div>
@@ -97,7 +102,7 @@ const WorksSystem = () => {
               6
             </div>
             <div>
-              <img src="/src/assets/apply.png" alt="" />
+              <img src={applyImg} alt="" />
             </div>
           </div>
           <div>

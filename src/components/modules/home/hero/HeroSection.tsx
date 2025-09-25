@@ -1,4 +1,8 @@
-import React from "react";
+import heroIcon from "../../../../assets/hero_icon.png";
+import arrSubnav from "../../../../assets/arr_subnav.svg.png";
+import frameImg from "../../../../assets/Frame 1171277230.png";
+import coardConnector from "../../../../assets/coardConnector.png";
+import doublestar from "../../../../assets/doublestar.png";
 
 const HeroSection = () => {
   return (
@@ -6,7 +10,7 @@ const HeroSection = () => {
       <div className="pt-3 w-10/12 mx-auto lg:flex lg:justify-between">
         <div>
           <div className="-ml-20">
-            <img src="/src/assets/hero_icon.png" alt="" />
+            <img src={heroIcon} alt="" />
           </div>
 
           <div className="space-y-3">
@@ -30,14 +34,13 @@ const HeroSection = () => {
               Improve your resume for FREE
             </span>
             <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-              <img src="/src/assets/arr_subnav.svg.png" alt="" />
+              <img src={arrSubnav} alt="" />
             </div>
           </button>
         </div>
 
         <div className="relative mt-10 lg:w-[48%]">
-          {/* Card 1 */}
-          <div className="relative w-full lg:w-[350px] bg-white rounded-2xl shadow p-6 z-10 mt-6 lg:mt-28">
+          <div className="relative w-full lg:w-[350px] h-[400px] bg-white rounded-2xl shadow p-6 z-10 mt-6 lg:mt-28">
             <h2 className="text-lg font-semibold text-gray-400">Name</h2>
             <hr className="my-2 text-gray-200" />
 
@@ -73,11 +76,10 @@ const HeroSection = () => {
             </section>
           </div>
 
-          {/* Card 2 */}
-          <div className="relative w-full lg:w-auto bg-white rounded-2xl shadow p-6 z-20 mt-6 lg:-mt-[400px] lg:ml-40">
+          <div className="relative w-full lg:w-auto bg-white rounded-2xl shadow p-6 z-20 mt-6 lg:-mt-[455px] lg:ml-45">
             <div className="absolute top-4 right-1 w-20 h-12">
               <img
-                src="/src/assets/Frame 1171277230.png"
+                src={frameImg}
                 alt=""
                 className="absolute -top-20 -right-2 w-[200px] h-[97px] lg:w-[180px] lg:h-[87px]"
               />
@@ -142,41 +144,29 @@ const HeroSection = () => {
             </section>
 
             <img
-              src="/src/assets/coardConnector.png"
+              src={coardConnector}
               alt="line indicator"
               className="absolute hidden lg:block top-3 -left-40 w-[150px] h-[43px]"
             />
             <img
-              src="/src/assets/doublestar.png"
+              src={doublestar}
               alt="star icon"
               className="absolute -top-5 -left-5 w-[40px] h-[40px]"
             />
             <div className="absolute bottom-10 h-[32px] right-0 bg-white shadow-md px-4 py-2 rounded-full text-sm flex items-center gap-2 border border-gray-200 z-40">
-              <img
-                src="/src/assets/doublestar.png"
-                alt="icon"
-                className="w-4 h-4"
-              />
+              <img src={doublestar} alt="icon" className="w-4 h-4" />
               <span className="font-medium text-xs">Summary Enhanced</span>
             </div>
 
             <div className="absolute bottom-0 h-[32px] right-0 bg-white shadow-md px-4 py-2 rounded-full text-sm flex items-center gap-2 border border-gray-200 z-40">
-              <img
-                src="/src/assets/doublestar.png"
-                alt="icon"
-                className="w-4 h-4"
-              />
+              <img src={doublestar} alt="icon" className="w-4 h-4" />
               <span className="font-medium text-xs">
                 Relevant Skills Highlighted
               </span>
             </div>
 
             <div className="absolute -bottom-9 h-[32px] right-0 bg-white shadow-md px-4 py-2 rounded-full text-sm flex items-center gap-2 border border-gray-200 z-40">
-              <img
-                src="/src/assets/doublestar.png"
-                alt="icon"
-                className="w-4 h-4"
-              />
+              <img src={doublestar} alt="icon" className="w-4 h-4" />
               <span className="font-medium text-xs">
                 Recent Work Experience Enhanced
               </span>

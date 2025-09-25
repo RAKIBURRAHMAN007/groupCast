@@ -1,8 +1,17 @@
-import React from "react";
+import middleImg from "../../../../assets/middle.png";
+import topImg from "../../../../assets/top.png";
+import topRightImg from "../../../../assets/topright.png";
+import leftBottomImg from "../../../../assets/leftbottom.png";
+import rightBottomImg from "../../../../assets/rightbottom.png";
+import quoteImg from "../../../../assets/quote.png";
+import michelImg from "../../../../assets/michelb.png";
+import shivaImg from "../../../../assets/shiva.png";
+import kenImg from "../../../../assets/kend.png";
+import loadMoreImg from "../../../../assets/loadmore.png";
 
 const Review = () => {
   return (
-    <div className="w-10/12 mx-auto mt-20">
+    <div id="blog" className="w-10/12 mx-auto mt-20">
       <h1 className="font-bold text-xl lg:text-[36px]">Voice From the world</h1>
       <p className="lg:text-[18px] text-sm">
         What our users say after using Jobmantic and how it helped them <br />
@@ -11,46 +20,41 @@ const Review = () => {
       <div className="md:flex justify-between">
         <div>
           <div className="relative w-80 h-80 mx-auto mt-20">
-            {/* Center Image */}
             <div className="absolute inset-0 m-auto w-[120px] h-[120px] rounded-2xl overflow-hidden">
               <img
-                src="/src/assets/middle.png"
+                src={middleImg}
                 alt="Center"
                 className="w-full h-full object-cover"
               />
             </div>
 
-            {/* Top Left */}
             <div className="absolute top-20 left-14 w-[42px] h-[42px] rounded-2xl overflow-hidden">
               <img
-                src="/src/assets/top.png"
+                src={topImg}
                 alt="Top Left"
                 className="w-full h-full object-cover"
               />
             </div>
 
-            {/* Top Right */}
             <div className="absolute top-10 right-20 w-[60px] h-[60px] rounded-2xl overflow-hidden">
               <img
-                src="/src/assets/topright.png"
+                src={topRightImg}
                 alt="Top Right"
                 className="w-full h-full object-cover"
               />
             </div>
 
-            {/* Bottom Left */}
             <div className="absolute bottom-10 left-20 w-[60px] h-[60px] rounded-2xl overflow-hidden">
               <img
-                src="/src/assets/leftbottom.png"
+                src={leftBottomImg}
                 alt="Bottom Left"
                 className="w-full h-full object-cover"
               />
             </div>
 
-            {/* Bottom Right */}
             <div className="absolute bottom-20 right-14 w-[42px] h-[42px] rounded-2xl overflow-hidden">
               <img
-                src="/src/assets/rightbottom.png"
+                src={rightBottomImg}
                 alt="Bottom Right"
                 className="w-full h-full object-cover"
               />
@@ -85,21 +89,18 @@ const Review = () => {
         </div>
 
         <div className="mt-8">
-          <div className="max-w-2xl mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl  rounded-br-2xl p-6">
-            {/* Quote icon */}
-            <img src="/src/assets/quote.png" alt="" />
+          <div className="max-w-2xl mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl rounded-br-2xl p-6">
+            <img src={quoteImg} alt="" />
 
-            {/* Testimonial text */}
-            <p className=" text-[16px] text-center">
+            <p className="text-[16px] text-center">
               omg i cannot believe i am getting a interview after using this.
               the recommendations is well thought off. highly recommend everyone
               to use this website.
             </p>
 
-            {/* Author */}
             <div className="flex items-center gap-3 mt-5">
               <img
-                src="https://randomuser.me/api/portraits/women/44.jpg"
+                src={michelImg}
                 alt="Michelle V."
                 className="w-8 h-8 rounded-full"
               />
@@ -111,24 +112,39 @@ const Review = () => {
               </p>
             </div>
           </div>
-          <div className="max-w-[550px] mt-4 md:ml-30  mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl  rounded-br-2xl p-6">
-            {/* Quote icon */}
-            <img src="/src/assets/quote.png" alt="" />
 
-            {/* Testimonial text */}
-            <p className=" text-[16px] text-center">
-              omg i cannot believe i am getting a interview after using this.
-              the recommendations is well thought off. highly recommend everyone
-              to use this website.
+          <div className="max-w-[550px] mt-4 md:ml-30 mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl rounded-br-2xl p-6">
+            <img src={quoteImg} alt="" />
+
+            <p className="text-[16px] text-center">
+              The custom resume feature saved me so much time and effort. It
+              made sure my resume matched the job descriptions perfectly. I am
+              gonna use it for every job I apply.
             </p>
 
-            {/* Author */}
             <div className="flex items-center gap-3 mt-5">
               <img
-                src="https://randomuser.me/api/portraits/women/44.jpg"
-                alt="Michelle V."
+                src={shivaImg}
+                alt="Shiva V."
                 className="w-8 h-8 rounded-full"
               />
+              <p className="text-sm text-gray-800">
+                <span className="font-semibold">Ken D.</span>{" "}
+                <span className="text-gray-500">Senior Recruiter</span>
+              </p>
+            </div>
+          </div>
+
+          <div className="max-w-xl mt-4 md:ml-24 mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl rounded-br-2xl p-6">
+            <img src={quoteImg} alt="" />
+
+            <p className="text-[16px] text-center">
+              Really easy to use and understand. I loved how I could take direct
+              action on suggestions and not just learn about them.
+            </p>
+
+            <div className="flex items-center gap-3 mt-5">
+              <img src={kenImg} alt="Ken D." className="w-8 h-8 rounded-full" />
               <p className="text-sm text-gray-800">
                 <span className="font-semibold">Michelle V.</span>{" "}
                 <span className="text-gray-500">
@@ -137,30 +153,15 @@ const Review = () => {
               </p>
             </div>
           </div>
-          <div className="max-w-xl mt-4 md:ml-24  mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl  rounded-br-2xl p-6">
-            <img src="/src/assets/quote.png" alt="" />
 
-            <p className=" text-[16px] text-center">
-              omg i cannot believe i am getting a interview after using this.
-              the recommendations is well thought off. highly recommend everyone
-              to use this website.
-            </p>
-
-            <div className="flex items-center gap-3 mt-5">
-              <img
-                src="https://randomuser.me/api/portraits/women/44.jpg"
-                alt="Michelle V."
-                className="w-8 h-8 rounded-full"
-              />
-              <p className="text-sm text-gray-800">
-                <span className="font-semibold">Michelle V.</span>{" "}
-                <span className="text-gray-500">
-                  / Sr. Digital Marketing Manager
-                </span>
-              </p>
-            </div>
-          </div>
           <div className="max-w-xl mt-4 md:ml-24 mx-auto bg-white shadow-sm rounded-tl-2xl rounded-bl-2xl rounded-br-2xl p-6"></div>
+
+          <button className="flex items-center gap-1 lg:ml-28 mt-10 mb-10 hover:text-blue-800">
+            Load more{" "}
+            <span>
+              <img src={loadMoreImg} alt="" />
+            </span>
+          </button>
         </div>
       </div>
     </div>

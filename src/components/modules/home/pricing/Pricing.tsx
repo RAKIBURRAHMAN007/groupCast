@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Pricing = () => {
   const [active, setActive] = useState("monthly");
   return (
-    <div className="w-10/12 mx-auto mt-20">
+    <div id="pricing" className="w-10/12 mx-auto mt-20">
       <h1 className="font-bold text-xl lg:text-[48px] text-center">Pricing</h1>
       <div className="flex items-center justify-center mt-10">
         <div className="inline-flex bg-gray-100 p-1 rounded-full relative">
@@ -74,7 +74,7 @@ const Pricing = () => {
             MOST POPULAR
           </div>
 
-          <div className="rounded-xl h-[595px] border-[#23a2fc] border shadow-sm p-6 bg-white">
+          <div className="rounded-xl h-[620px] border-[#23a2fc] border shadow-sm p-6 bg-white">
             <div className="text-sm font-medium text-[#23a2fc] mb-2">PRO</div>
             <div className="text-4xl font-semibold mb-1 flex items-center">
               ৳3000<span className="text-gray-500 text-sm ">/month</span>

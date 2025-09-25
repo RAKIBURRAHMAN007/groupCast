@@ -1,4 +1,10 @@
-import React from "react";
+// Import all images
+import SmartResume from "../../../../assets/smartResume.png";
+import ThreeXHigher from "../../../../assets/3xhigher.png";
+import LightningFast from "../../../../assets/lighitingfast.png";
+import ATSScore from "../../../../assets/attscore.png";
+import JobPlacement from "../../../../assets/job.png";
+import Career from "../../../../assets/carrier.png";
 
 const FeatureBubbles = () => {
   return (
@@ -13,7 +19,7 @@ const FeatureBubbles = () => {
             >
               <div className="flex items-center justify-center rounded-full w-10 h-10 mb-2">
                 <img
-                  src="/src/assets/smartResume.png"
+                  src={SmartResume}
                   alt="Smart Resume Tailoring"
                   className="w-8 h-8"
                 />
@@ -36,7 +42,7 @@ const FeatureBubbles = () => {
             >
               <div className="flex items-center justify-center rounded-full w-10 h-10 mb-2">
                 <img
-                  src="/src/assets/3xhigher.png"
+                  src={ThreeXHigher}
                   alt="3X Higher Interview Rate"
                   className="w-8 h-8"
                 />
@@ -59,7 +65,7 @@ const FeatureBubbles = () => {
             >
               <div className="flex items-center justify-center rounded-full w-10 h-10 mb-2">
                 <img
-                  src="/src/assets/lighitingfast.png"
+                  src={LightningFast}
                   alt="Lightning-Fast Job Matching"
                   className="w-8 h-8"
                 />
@@ -82,7 +88,7 @@ const FeatureBubbles = () => {
             >
               <div className="flex items-center justify-center rounded-full w-10 h-10 mb-2">
                 <img
-                  src="/src/assets/attscore.png"
+                  src={ATSScore}
                   alt="ATS Score Optimization"
                   className="w-8 h-8"
                 />
@@ -105,7 +111,7 @@ const FeatureBubbles = () => {
             >
               <div className="flex items-center justify-center rounded-full w-10 h-10 mb-2">
                 <img
-                  src="/src/assets/job.png"
+                  src={JobPlacement}
                   alt="Premium Job Placement"
                   className="w-8 h-8"
                 />
@@ -127,11 +133,7 @@ const FeatureBubbles = () => {
               style={{ transform: "translateY(-2px)" }}
             >
               <div className="flex items-center justify-center rounded-full w-10 h-10 mb-2">
-                <img
-                  src="/src/assets/carrier.png"
-                  alt="Career Mentoring"
-                  className="w-8 h-8"
-                />
+                <img src={Career} alt="Career Mentoring" className="w-8 h-8" />
               </div>
               <p className="text-[11px] font-medium text-center px-2">
                 Career Mentoring
@@ -142,71 +144,34 @@ const FeatureBubbles = () => {
       </div>
 
       <div className="lg:hidden max-w-md mx-auto px-4 mt-6 space-y-4">
-        <div className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md">
-          <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
-            <img
-              src="/src/assets/smartResume.png"
-              alt="Smart Resume Tailoring"
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm font-medium">Smart Resume Tailoring</p>
-        </div>
-
-        <div className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md">
-          <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
-            <img
-              src="/src/assets/3xhigher.png"
-              alt="3X Higher Interview Rate"
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm font-medium">3X Higher Interview Rate</p>
-        </div>
-
-        <div className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md">
-          <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
-            <img
-              src="/src/assets/lighitingfast.png"
-              alt="Lightning-Fast Job Matching"
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm font-medium">Lightning-Fast Job Matching</p>
-        </div>
-
-        <div className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md">
-          <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
-            <img
-              src="/src/assets/attscore.png"
-              alt="ATS Score Optimization"
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm font-medium">ATS Score Optimization</p>
-        </div>
-
-        <div className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md">
-          <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
-            <img
-              src="/src/assets/job.png"
-              alt="Premium Job Placement"
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm font-medium">Premium Job Placement</p>
-        </div>
-
-        <div className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md">
-          <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
-            <img
-              src="/src/assets/carrier.png"
-              alt="Career Mentoring"
-              className="w-6 h-6"
-            />
-          </div>
-          <p className="text-sm font-medium">Career Mentoring</p>
-        </div>
+        {[
+          SmartResume,
+          ThreeXHigher,
+          LightningFast,
+          ATSScore,
+          JobPlacement,
+          Career,
+        ].map((img, i) => {
+          const labels = [
+            "Smart Resume Tailoring",
+            "3X Higher Interview Rate",
+            "Lightning-Fast Job Matching",
+            "ATS Score Optimization",
+            "Premium Job Placement",
+            "Career Mentoring",
+          ];
+          return (
+            <div
+              key={i}
+              className="flex items-center bg-[#E6F2FF] rounded-lg p-4 shadow-md"
+            >
+              <div className="flex items-center justify-center rounded-full w-12 h-12 bg-white mr-4">
+                <img src={img} alt={labels[i]} className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium">{labels[i]}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

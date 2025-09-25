@@ -1,7 +1,11 @@
-import React from "react";
-
-import AIResumeBuilder from "./AIResumeBuilder";
 import FeatureBubbles from "./FeatureBubbles";
+import AIResumeBuilder from "./AIResumeBuilder";
+
+import DoubleStar from "../../../../assets/doublestar.png";
+import ArrSubnav from "../../../../assets/arr_subnav.svg.png";
+import CreateResume from "../../../../assets/createresume.png";
+import JobMatching from "../../../../assets/jobmatching.png";
+import CarrierMonitoring from "../../../../assets/carriermonitoring.png";
 
 const About = () => {
   return (
@@ -13,10 +17,11 @@ const About = () => {
         <div className="flex items-center gap-1 w-[230px]">
           <div className="w-full h-[3px] bg-black"></div>
           <div>
-            <img src="/src/assets/doublestar.png" alt="" />
+            <img src={DoubleStar} alt="" />
           </div>
         </div>
       </div>
+
       <section className="mt-20 md:flex items-center justify-between">
         <div className="pt-16">
           <h1 className="text-2xl lg:text-[40px] font-semibold">
@@ -32,23 +37,20 @@ const About = () => {
               Create a resume
             </span>
             <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-              <img src="/src/assets/arr_subnav.svg.png" alt="" />
+              <img src={ArrSubnav} alt="" />
             </div>
           </button>
         </div>
         <div className="md:w-1/2">
-          <img
-            className="w-full h-auto"
-            src="/src/assets/createresume.png"
-            alt=""
-          />
+          <img className="w-full h-auto" src={CreateResume} alt="" />
         </div>
       </section>
-      <section className="mt-20 flex flex-col-reverse md:flex-row  md:items-center md:justify-between">
+
+      <section className="mt-20 flex flex-col-reverse md:flex-row md:items-center md:justify-between">
         <div className="md:w-1/2">
           <img
             className="md:h-[416px] w-full md:w-[416px]"
-            src="/src/assets/jobmatching.png"
+            src={JobMatching}
             alt=""
           />
         </div>
@@ -64,16 +66,16 @@ const About = () => {
           <div className="flex items-center gap-1 w-[230px]">
             <div className="w-full h-[3px] bg-black"></div>
             <div>
-              <img
-                className="opacity-30"
-                src="/src/assets/doublestar.png"
-                alt=""
-              />
+              <img className="opacity-30" src={DoubleStar} alt="" />
             </div>
           </div>
         </div>
       </section>
-      <section className="mt-20 md:flex items-center justify-between">
+
+      <section
+        id="career"
+        className="mt-20 md:flex items-center justify-between"
+      >
         <div className="pt-16">
           <h1 className="text-2xl lg:text-[40px] font-semibold">
             Career Mentoring
@@ -91,20 +93,17 @@ const About = () => {
               Go Mentoring
             </span>
             <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center">
-              <img src="/src/assets/arr_subnav.svg.png" alt="" />
+              <img src={ArrSubnav} alt="" />
             </div>
           </button>
         </div>
         <div className="md:w-1/2">
-          <img
-            className="w-full h-auto"
-            src="/src/assets/carriermonitoring.png"
-            alt=""
-          />
+          <img className="w-full h-auto" src={CarrierMonitoring} alt="" />
         </div>
       </section>
-      <FeatureBubbles></FeatureBubbles>
-      <AIResumeBuilder></AIResumeBuilder>
+
+      <FeatureBubbles />
+      <AIResumeBuilder />
     </section>
   );
 };
