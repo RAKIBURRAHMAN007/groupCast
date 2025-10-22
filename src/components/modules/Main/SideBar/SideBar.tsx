@@ -9,8 +9,10 @@ import {
 } from "react-icons/fa";
 
 interface SidebarProps {
-  activeSection: "groups" | "tasks";
-  onSectionChange: (section: "groups" | "tasks") => void;
+  activeSection: "groups" | "tasks" | "profile" | "reminders" | "settings";
+  onSectionChange: (
+    section: "groups" | "tasks" | "profile" | "reminders" | "settings"
+  ) => void;
   onMobileMenuToggle?: () => void;
 }
 
@@ -19,17 +21,25 @@ const Sidebar = ({
   onSectionChange,
   onMobileMenuToggle,
 }: SidebarProps) => {
-  // Removed chat section from menu
   const menuItems = [
     { id: "groups" as const, icon: FaUsers, label: "Groups", badge: 3 },
     { id: "tasks" as const, icon: FaTasks, label: "Tasks", badge: 5 },
   ];
 
   const bottomMenuItems = [
-    { id: "reminders", icon: FaBell, label: "Reminders" },
-    { id: "profile", icon: FaUser, label: "Profile" },
-    { id: "settings", icon: FaCog, label: "Settings" },
+    { id: "reminders" as const, icon: FaBell, label: "Reminders" },
+    { id: "profile" as const, icon: FaUser, label: "Profile" },
+    { id: "settings" as const, icon: FaCog, label: "Settings" },
   ];
+
+  const handleItemClick = (
+    section: "groups" | "tasks" | "profile" | "reminders" | "settings"
+  ) => {
+    onSectionChange(section);
+    if (onMobileMenuToggle) {
+      onMobileMenuToggle();
+    }
+  };
 
   return (
     <div className="lg:w-20 w-40 bg-gray-800 flex flex-col items-center py-6 space-y-8 h-full">
@@ -62,12 +72,7 @@ const Sidebar = ({
           return (
             <button
               key={item.id}
-              onClick={() => {
-                onSectionChange(item.id);
-                if (onMobileMenuToggle) {
-                  onMobileMenuToggle();
-                }
-              }}
+              onClick={() => handleItemClick(item.id)}
               className={`relative w-full p-3 rounded-2xl transition-all duration-200 group ${
                 isActive
                   ? "bg-yellow-600 text-white"
@@ -75,13 +80,14 @@ const Sidebar = ({
               }`}
             >
               <Icon size={20} className="mx-auto" />
-
-              {/* Badge */}
               {item.badge > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {item.badge > 9 ? "9+" : item.badge}
                 </span>
               )}
+              <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 hidden lg:block">
+                {item.label}
+              </span>
             </button>
           );
         })}
@@ -91,14 +97,22 @@ const Sidebar = ({
       <div className="flex flex-col space-y-4 w-full px-2">
         {bottomMenuItems.map((item) => {
           const Icon = item.icon;
+          const isActive = activeSection === item.id;
 
           return (
             <button
               key={item.id}
-              className="relative w-full p-3 rounded-2xl text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 group"
-              onClick={onMobileMenuToggle}
+              onClick={() => handleItemClick(item.id)}
+              className={`relative w-full p-3 rounded-2xl transition-all duration-200 group ${
+                isActive
+                  ? "bg-yellow-600 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`}
             >
               <Icon size={20} className="mx-auto" />
+              <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 hidden lg:block">
+                {item.label}
+              </span>
             </button>
           );
         })}

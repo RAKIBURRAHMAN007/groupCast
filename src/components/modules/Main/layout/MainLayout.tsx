@@ -7,18 +7,21 @@ import ChatInterface from "../ChatInterface/ChatInterface";
 import TaskDetails from "../TaskDetails/TaskDetails";
 
 import { FaUsers, FaTasks, FaBars } from "react-icons/fa";
+import Profile from "../Profile/Profile";
+import Reminders from "../Reminder/Reminder";
+import { Settings } from "lucide-react";
 
 const MainLayout = () => {
-  // State for active section and selections
-  const [activeSection, setActiveSection] = useState<"groups" | "tasks">(
-    "groups"
-  );
+  const [activeSection, setActiveSection] = useState<
+    "groups" | "tasks" | "profile" | "reminders" | "settings"
+  >("groups");
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Toggle functions
-  const toggleSection = (section: "groups" | "tasks") => {
+  const toggleSection = (
+    section: "groups" | "tasks" | "profile" | "reminders" | "settings"
+  ) => {
     setActiveSection(section);
     setSelectedGroup(null);
     setSelectedTask(null);
@@ -28,11 +31,13 @@ const MainLayout = () => {
   const toggleGroupSelection = (groupId: string) => {
     setSelectedGroup(groupId);
     setSelectedTask(null);
+    setActiveSection("groups");
   };
 
   const toggleTaskSelection = (taskId: string) => {
     setSelectedTask(taskId);
     setSelectedGroup(null);
+    setActiveSection("tasks");
   };
 
   const toggleSidebar = () => {
@@ -44,11 +49,43 @@ const MainLayout = () => {
     setSelectedTask(null);
   };
 
-  // Bottom navigation items - removed chat section
+  // Bottom navigation items
   const bottomNavItems = [
     { id: "groups" as const, icon: FaUsers, label: "Groups" },
     { id: "tasks" as const, icon: FaTasks, label: "Tasks" },
   ];
+
+  // Render right panel content based on active section
+  const renderRightPanelContent = () => {
+    const isManageSection = (
+      ["profile", "reminders", "settings"] as string[]
+    ).includes(activeSection);
+
+    if (selectedGroup) {
+      return <ChatInterface groupId={selectedGroup} onBack={toggleBack} />;
+    } else if (selectedTask) {
+      return <TaskDetails taskId={selectedTask} onBack={toggleBack} />;
+    } else if (activeSection === "profile") {
+      return <Profile />;
+    } else if (activeSection === "reminders") {
+      return <Reminders />;
+    } else if (activeSection === "settings") {
+      return <Settings />;
+    } else {
+      return (
+        <div className="flex-1 flex items-center justify-center text-gray-400 p-8 text-center">
+          <div className="max-w-md">
+            <h3 className="text-xl font-semibold mb-2">Welcome to GroupCast</h3>
+            <p className="text-gray-400 mb-4">
+              {activeSection === "groups" && "Select a group to start chatting"}
+              {activeSection === "tasks" && "Select a task to view details"}
+              {isManageSection && "Manage your account and preferences"}
+            </p>
+          </div>
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
@@ -84,7 +121,11 @@ const MainLayout = () => {
         border-r border-gray-700 bg-gray-800
         transform transition-transform duration-300 ease-in-out
         ${
-          !selectedGroup && !selectedTask
+          !selectedGroup &&
+          !selectedTask &&
+          activeSection !== "profile" &&
+          activeSection !== "reminders" &&
+          activeSection !== "settings"
             ? "translate-x-0"
             : "-translate-x-full lg:translate-x-0"
         }
@@ -104,33 +145,33 @@ const MainLayout = () => {
             selectedTask={selectedTask}
           />
         )}
+        {(activeSection === "profile" ||
+          activeSection === "reminders" ||
+          activeSection === "settings") && (
+          <div className="p-4 border-b border-gray-700 lg:hidden">
+            <h1 className="text-xl font-semibold capitalize">
+              {activeSection}
+            </h1>
+          </div>
+        )}
       </div>
 
-      {/* Right Panel - Chat Interface / Task Details */}
+      {/* Right Panel - Chat Interface / Task Details / Profile / Reminders / Settings */}
       <div
         className={`
         flex-1 flex flex-col bg-gray-800
-        ${selectedGroup || selectedTask ? "flex" : "hidden lg:flex"}
+        ${
+          selectedGroup ||
+          selectedTask ||
+          activeSection === "profile" ||
+          activeSection === "reminders" ||
+          activeSection === "settings"
+            ? "flex"
+            : "hidden lg:flex"
+        }
       `}
       >
-        {selectedGroup ? (
-          <ChatInterface groupId={selectedGroup} onBack={toggleBack} />
-        ) : selectedTask ? (
-          <TaskDetails taskId={selectedTask} onBack={toggleBack} />
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 p-8 text-center">
-            <div className="max-w-md">
-              <h3 className="text-xl font-semibold mb-2">
-                Welcome to GroupCast
-              </h3>
-              <p className="text-gray-400 mb-4">
-                {activeSection === "groups" &&
-                  "Select a group to start chatting"}
-                {activeSection === "tasks" && "Select a task to view details"}
-              </p>
-            </div>
-          </div>
-        )}
+        {renderRightPanelContent()}
       </div>
 
       {/* Mobile Bottom Navigation */}

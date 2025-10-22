@@ -20,7 +20,10 @@ const SignIn = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { setUser, logOut, userLogin, loading, setLoading } = authContext;
+  const { setUser, logOut, userLogin, loading, setLoading, user } = authContext;
+  if (user) {
+    navigate("/main");
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +40,7 @@ const SignIn = () => {
         if (user.emailVerified) {
           setUser(user);
           toast.success("Login Successful!");
-          navigate("/mainScreen");
+          navigate("/main");
         } else {
           toast.warning("Please verify your email before logging in.", {
             autoClose: 5000,
@@ -60,7 +63,6 @@ const SignIn = () => {
       return;
     }
 
-    // Using toast.promise for better UX
     toast.promise(sendPasswordResetEmail(auth, email), {
       pending: "Sending password reset email...",
       success: {
@@ -81,7 +83,7 @@ const SignIn = () => {
     <div className="min-h-screen bg-[#181024] flex items-center justify-center px-4 py-8">
       <div className="w-11/12 mx-auto">
         <h1 className="text-center font-bold text-yellow-600 text-3xl md:text-5xl pt-5">
-          SignIn to Your GroupCast <br />
+          Sign In to Your GroupCast <br />
           Account
         </h1>
         <p className="text-center md:text-xl font-semibold text-gray-300 mt-4 mb-8">

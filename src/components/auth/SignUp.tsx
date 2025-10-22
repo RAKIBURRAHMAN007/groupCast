@@ -38,7 +38,10 @@ const SignUp = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { createNewUser, setUser } = authContext;
+  const { createNewUser, setUser, user } = authContext;
+  if (user) {
+    navigate("/main");
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

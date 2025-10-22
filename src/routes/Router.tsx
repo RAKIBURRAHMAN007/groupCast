@@ -6,6 +6,7 @@ import WelcomePage from "../components/modules/welcomePage/WelcomePage";
 import SignIn from "../components/auth/SignIn";
 import SignUp from "../components/auth/SignUp";
 import MainLayout from "../components/modules/Main/layout/MainLayout";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/main",
-        Component: MainLayout,
+        Component: () => (
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        ),
       },
     ],
   },
