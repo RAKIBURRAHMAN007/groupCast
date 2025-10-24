@@ -290,7 +290,7 @@ const TaskList = ({ onTaskSelect, selectedTask }: TaskListProps) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-800">
+    <div className="flex-1 flex flex-col overflow-auto bg-gray-800">
       {/* Header */}
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center justify-between">

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // services/messageApi.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import UseAxiosPublic from "../hooks/useAxiosPublic";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
 const axiosPublic = UseAxiosPublic();
 
@@ -28,7 +31,7 @@ export interface MessagesResponse {
   };
 }
 
-// API Functions - FIXED to work with email
+// API Functions
 export const getMessagesByGroup = async (
   groupId: string,
   page: number = 1,
@@ -44,18 +47,20 @@ export const sendMessage = async (data: {
   groupId: string;
   content: string;
   messageType?: "text" | "image" | "file";
+  senderEmail: string;
 }): Promise<Message> => {
-  // Remove senderEmail from here - backend should get it from auth
   const response = await axiosPublic.post("/messages/send", data);
   return response.data.data;
 };
 
-export const deleteMessage = async (messageId: string): Promise<void> => {
-  // Remove userEmail from here - backend should get it from auth
-  await axiosPublic.delete(`/messages/${messageId}`);
+export const deleteMessage = async (
+  messageId: string,
+  userEmail: string
+): Promise<void> => {
+  await axiosPublic.delete(`/messages/${messageId}/${userEmail}`);
 };
 
-// React Query Hooks - FIXED
+// React Query Hooks
 export const useMessages = (groupId: string, page: number = 1) => {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["messages", groupId, page],
@@ -74,13 +79,19 @@ export const useMessages = (groupId: string, page: number = 1) => {
 
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
+  const authContext = useContext(AuthContext);
+  const currentUser = authContext?.user;
 
   return useMutation({
     mutationFn: (data: {
       groupId: string;
       content: string;
       messageType?: "text" | "image" | "file";
-    }) => sendMessage(data),
+    }) =>
+      sendMessage({
+        ...data,
+        senderEmail: currentUser?.email || "", // Automatically add senderEmail
+      }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["messages", variables.groupId],
@@ -91,9 +102,12 @@ export const useSendMessage = () => {
 
 export const useDeleteMessage = () => {
   const queryClient = useQueryClient();
+  const authContext = useContext(AuthContext);
+  const currentUser = authContext?.user;
 
   return useMutation({
-    mutationFn: (messageId: string) => deleteMessage(messageId),
+    mutationFn: (messageId: string) =>
+      deleteMessage(messageId, currentUser?.email || ""),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["messages"] });
     },

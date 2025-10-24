@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/ChatInterface/ChatInterface.tsx
 import { useState, useRef, useEffect, useContext } from "react";
@@ -199,13 +200,6 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
         messageType: "text",
       });
 
-      // Also send via HTTP for persistence
-      await sendMessageMutation.mutateAsync({
-        groupId,
-        content: newMessage,
-        messageType: "text",
-      });
-
       setNewMessage("");
     } catch (error: any) {
       console.error("Failed to send message:", error);
@@ -217,9 +211,6 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
     try {
       // Delete via socket for real-time
       deleteRealtimeMessage(messageId);
-
-      // Also delete via HTTP for persistence
-      await deleteMessageMutation.mutateAsync(messageId);
 
       toast.success("Message deleted successfully");
     } catch (error: any) {

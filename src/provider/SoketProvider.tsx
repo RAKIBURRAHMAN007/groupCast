@@ -1,25 +1,16 @@
-// contexts/SocketContext.tsx
-import { createContext, useContext, useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import { io, type Socket } from "socket.io-client";
+import { SocketContext } from "../contexts/SoketContext";
 
-export interface SocketContextType {
-  socket: Socket | null;
-  isConnected: boolean;
-}
-
-export const SocketContext = createContext<SocketContextType>({
-  socket: null,
-  isConnected: false,
-});
-
+// contexts/SocketContext.tsx - UPDATED
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    // Use email instead of _id for authentication
     if (!authContext?.user?.email) {
       console.log("No user email found, skipping socket connection");
       return;
@@ -37,25 +28,25 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     newSocket.on("connect", () => {
       console.log("Socket connected successfully");
       setIsConnected(true);
-      // Authenticate with email
+
+      // Authenticate with email immediately after connection
       newSocket.emit("authenticate", { email: authContext?.user?.email });
-    });
-
-    newSocket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
-      setIsConnected(false);
-    });
-
-    newSocket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-      setIsConnected(false);
     });
 
     newSocket.on("authenticated", () => {
       console.log("Socket authenticated successfully");
     });
 
-    newSocket.on("error", (error) => {
+    newSocket.on("authentication_error", (error: any) => {
+      console.error("Socket authentication failed:", error);
+    });
+
+    // Add error handling for joinGroup events
+    newSocket.on("joinGroup_error", (error: any) => {
+      console.error("Failed to join group:", error);
+    });
+
+    newSocket.on("error", (error: any) => {
       console.error("Socket error:", error);
     });
 
