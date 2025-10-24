@@ -85,7 +85,7 @@ const SignIn = () => {
     <div className="min-h-screen bg-[#181024] flex items-center justify-center px-4 py-8">
       <div className="w-11/12 mx-auto">
         <h1 className="text-center font-bold text-yellow-600 text-3xl md:text-5xl pt-5">
-          Sign In to Your GroupCast <br />
+          Sign In to Your Grouply <br />
           Account
         </h1>
         <p className="text-center md:text-xl font-semibold text-gray-300 mt-4 mb-8">
@@ -167,7 +167,7 @@ const SignIn = () => {
 
               <div className="mt-6 text-center">
                 <p className="text-gray-300">
-                  New to GroupCast?{" "}
+                  New to Grouply?{" "}
                   <Link
                     to="/signup"
                     className="text-yellow-500 hover:text-yellow-400 font-semibold transition-colors underline"

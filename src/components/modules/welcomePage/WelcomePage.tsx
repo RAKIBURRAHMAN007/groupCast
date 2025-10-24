@@ -29,7 +29,7 @@ const WelcomePage = () => {
           {/* Header */}
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-bold text-yellow-600">
-              GroupCast
+              Grouply
             </h1>
             <p className="text-xl text-gray-300">
               All-in-One Professional Collaboration Platform
@@ -38,7 +38,7 @@ const WelcomePage = () => {
 
           {/* Main Description */}
           <p className="text-lg text-white leading-relaxed">
-            GroupCast combines powerful messaging, smart task management, and
+            Grouply combines powerful messaging, smart task management, and
             seamless team collaboration into one unified platform. Perfect for
             modern teams who value efficiency and productivity.
           </p>
