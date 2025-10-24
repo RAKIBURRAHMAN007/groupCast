@@ -26,6 +26,7 @@
     "react-router": "^7.9.1",
     "react-scroll": "^1.9.3",
     "react-toastify": "^11.0.5",
+    "socket.io-client": "^4.8.1",
     "sort-by": "^0.0.2",
     "tailwindcss": "^4.1.13"
   },
@@ -36,6 +37,7 @@
     "@types/react-query": "^1.2.8",
     "@types/react-scroll": "^1.8.10",
     "@types/react-slick": "^0.23.13",
+    "@types/socket.io-client": "^1.4.36",
     "@vitejs/plugin-react": "^5.0.3",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",

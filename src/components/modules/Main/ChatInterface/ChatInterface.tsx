@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/ChatInterface/ChatInterface.tsx
 import { useState, useRef, useEffect, useContext } from "react";
@@ -34,14 +33,14 @@ import {
   useAddMember,
 } from "../../../../services/groupapi";
 import { AuthContext } from "../../../../contexts/AuthContext";
-
-interface Message {
-  id: string;
-  text: string;
-  sender: string;
-  timestamp: Date;
-  isOwn: boolean;
-}
+import {
+  useMessages,
+  useSendMessage,
+  useDeleteMessage,
+  type Message,
+} from "../../../../services/messageApi";
+import { useRealtimeMessages } from "../../../../hooks/RealtimeMessage";
+import { SocketContext } from "../../../../contexts/SoketContext";
 
 interface ChatInterfaceProps {
   groupId: string;
@@ -49,7 +48,6 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [showGroupInfo, setShowGroupInfo] = useState(false);
   const [isEditingGroup, setIsEditingGroup] = useState(false);
@@ -60,17 +58,30 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
     isPrivate: false,
   });
   const [newMemberEmail, setNewMemberEmail] = useState("");
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const authContext = useContext(AuthContext);
+  const { socket, isConnected } = useContext(SocketContext);
   const currentUser = authContext?.user;
 
+  // Group data
   const {
     data: group,
     isLoading: groupLoading,
     refetch: refetchGroup,
   } = useGroupById(groupId);
 
+  // Messages data
+  const {
+    data: messagesData,
+    isLoading: messagesLoading,
+    refetch: refetchMessages,
+  } = useMessages(groupId);
+
+  // Mutations
+  const sendMessageMutation = useSendMessage();
+  const deleteMessageMutation = useDeleteMessage();
   const regenerateInviteCodeMutation = useRegenerateInviteCode();
   const updateGroupMutation = useUpdateGroup();
   const deleteGroupMutation = useDeleteGroup();
@@ -78,12 +89,16 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
   const updateMemberRoleMutation = useUpdateMemberRole();
   const addMemberMutation = useAddMember();
 
+  // Real-time messaging
+  const { sendRealtimeMessage, deleteRealtimeMessage } =
+    useRealtimeMessages(groupId);
+
   // Debug logs
   console.log("Current Group:", group);
   console.log("Current User:", currentUser);
-  console.log("Group Members:", group?.members);
+  console.log("Socket Connected:", isConnected);
 
-  // Helper function to get member email (handles both populated and non-populated userId)
+  // Helper function to get member email
   const getMemberEmail = (member: any): string => {
     if (typeof member.userId === "object" && member.userId?.email) {
       return member.userId.email;
@@ -99,41 +114,11 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
     return getMemberEmail(member);
   };
 
-  // Check if current user is admin - FIXED to work with populated userId
+  // Check if current user is admin
   const isCurrentUserAdmin = group?.members?.some((member: any) => {
     const memberEmail = getMemberEmail(member);
     return memberEmail === currentUser?.email && member.role === "admin";
   });
-
-  console.log("Is Current User Admin:", isCurrentUserAdmin);
-
-  // Mock messages data
-  useEffect(() => {
-    const mockMessages: Message[] = [
-      {
-        id: "1",
-        text: "Hey team! How is the project going?",
-        sender: "alice@example.com",
-        timestamp: new Date(Date.now() - 3600000),
-        isOwn: false,
-      },
-      {
-        id: "2",
-        text: "Going great! Just finished the authentication system.",
-        sender: "You",
-        timestamp: new Date(Date.now() - 1800000),
-        isOwn: true,
-      },
-      {
-        id: "3",
-        text: "Don't forget to share the invite code with new members!",
-        sender: "bob@example.com",
-        timestamp: new Date(Date.now() - 600000),
-        isOwn: false,
-      },
-    ];
-    setMessages(mockMessages);
-  }, [groupId]);
 
   // Initialize edit form when group data is available
   useEffect(() => {
@@ -146,28 +131,101 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
     }
   }, [group]);
 
+  // Typing indicator timeout
+  useEffect(() => {
+    let typingTimeout: NodeJS.Timeout;
+
+    if (socket && newMessage.trim()) {
+      // Emit typing start
+      socket.emit("typing", { groupId, isTyping: true });
+
+      typingTimeout = setTimeout(() => {
+        // Emit typing stop after 1 second of inactivity
+        socket.emit("typing", { groupId, isTyping: false });
+      }, 1000);
+    } else if (socket) {
+      // Emit typing stop when message is empty
+      socket.emit("typing", { groupId, isTyping: false });
+    }
+
+    return () => {
+      if (typingTimeout) clearTimeout(typingTimeout);
+    };
+  }, [newMessage, groupId, socket]);
+
+  // Listen for typing indicators
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUserTyping = (data: {
+      userEmail: string;
+      isTyping: boolean;
+    }) => {
+      setTypingUsers((prev) => {
+        const newSet = new Set(prev);
+        if (data.isTyping) {
+          newSet.add(data.userEmail);
+        } else {
+          newSet.delete(data.userEmail);
+        }
+        return newSet;
+      });
+    };
+
+    socket.on("userTyping", handleUserTyping);
+
+    return () => {
+      socket.off("userTyping", handleUserTyping);
+    };
+  }, [socket]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messagesData?.messages, typingUsers]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !currentUser?.email) return;
 
-    const message: Message = {
-      id: Date.now().toString(),
-      text: newMessage,
-      sender: "You",
-      timestamp: new Date(),
-      isOwn: true,
-    };
+    try {
+      // Send via socket for real-time
+      sendRealtimeMessage({
+        groupId,
+        content: newMessage,
+        messageType: "text",
+      });
 
-    setMessages((prev) => [...prev, message]);
-    setNewMessage("");
+      // Also send via HTTP for persistence
+      await sendMessageMutation.mutateAsync({
+        groupId,
+        content: newMessage,
+        messageType: "text",
+      });
+
+      setNewMessage("");
+    } catch (error: any) {
+      console.error("Failed to send message:", error);
+      toast.error(error?.response?.data?.message || "Failed to send message");
+    }
+  };
+
+  const handleDeleteMessage = async (messageId: string) => {
+    try {
+      // Delete via socket for real-time
+      deleteRealtimeMessage(messageId);
+
+      // Also delete via HTTP for persistence
+      await deleteMessageMutation.mutateAsync(messageId);
+
+      toast.success("Message deleted successfully");
+    } catch (error: any) {
+      console.error("Failed to delete message:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete message");
+    }
   };
 
   const handleCopyInviteCode = () => {
@@ -207,7 +265,9 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
         toast.success("New invite code generated!");
         refetchGroup();
       } catch (error: any) {
-        toast.error("Failed to regenerate invite code");
+        toast.error(
+          error?.response?.data?.message || "Failed to regenerate invite code"
+        );
       }
     }
   };
@@ -228,7 +288,7 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
       setIsEditingGroup(false);
       refetchGroup();
     } catch (error: any) {
-      toast.error("Failed to update group");
+      toast.error(error?.response?.data?.message || "Failed to update group");
     }
   };
 
@@ -243,7 +303,7 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
         toast.success("Group deleted successfully!");
         if (onBack) onBack();
       } catch (error: any) {
-        toast.error("Failed to delete group");
+        toast.error(error?.response?.data?.message || "Failed to delete group");
       }
     }
   };
@@ -262,7 +322,9 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
         toast.success("Member removed successfully!");
         refetchGroup();
       } catch (error: any) {
-        toast.error("Failed to remove member");
+        toast.error(
+          error?.response?.data?.message || "Failed to remove member"
+        );
       }
     }
   };
@@ -280,7 +342,9 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
       toast.success("Member role updated successfully!");
       refetchGroup();
     } catch (error: any) {
-      toast.error("Failed to update member role");
+      toast.error(
+        error?.response?.data?.message || "Failed to update member role"
+      );
     }
   };
 
@@ -317,18 +381,36 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
     }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+  const formatTime = (date: string | Date) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
   };
 
-  if (groupLoading) {
+  const formatMessages = (messages: Message[] = []) => {
+    return messages.map((message) => ({
+      id: message._id,
+      text: message.content,
+      sender:
+        message.senderId.email === currentUser?.email
+          ? "You"
+          : message.senderId.name || message.senderId.email,
+      senderEmail: message.senderId.email,
+      timestamp: new Date(message.createdAt),
+      isOwn: message.senderId.email === currentUser?.email,
+      messageType: message.messageType,
+    }));
+  };
+
+  const displayMessages = formatMessages(messagesData?.messages);
+
+  if (groupLoading || messagesLoading) {
     return (
       <div className="flex-1 flex flex-col bg-gray-800 items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
-        <p className="text-white mt-4">Loading group...</p>
+        <p className="text-white mt-4">Loading chat...</p>
       </div>
     );
   }
@@ -357,10 +439,21 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
               {group?.isPrivate && (
                 <FaLock className="text-gray-400 flex-shrink-0" size={12} />
               )}
+              {!isConnected && (
+                <span className="text-xs text-red-400 bg-red-900 px-2 py-1 rounded">
+                  Offline
+                </span>
+              )}
             </div>
             <p className="text-gray-400 text-xs truncate">
               {group?.members?.length || 0} members •{" "}
               {group?.description || "No description"}
+              {typingUsers.size > 0 && (
+                <span className="text-yellow-400 ml-2">
+                  {Array.from(typingUsers).join(", ")}{" "}
+                  {typingUsers.size === 1 ? "is" : "are"} typing...
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -402,36 +495,57 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
         >
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-3 md:space-y-4 bg-gray-900 bg-opacity-50">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.isOwn ? "justify-end" : "justify-start"
-                }`}
-              >
+            {displayMessages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                <FaUsers size={48} className="mb-4 opacity-50" />
+                <p className="text-lg">No messages yet</p>
+                <p className="text-sm">Start the conversation!</p>
+              </div>
+            ) : (
+              displayMessages.map((message) => (
                 <div
-                  className={`max-w-[85%] md:max-w-xs lg:max-w-md px-3 py-2 md:px-4 md:py-2 rounded-2xl ${
-                    message.isOwn
-                      ? "bg-yellow-600 text-white rounded-br-none"
-                      : "bg-gray-700 text-white rounded-bl-none"
-                  }`}
+                  key={message.id}
+                  className={`flex ${
+                    message.isOwn ? "justify-end" : "justify-start"
+                  } group relative`}
                 >
-                  {!message.isOwn && (
-                    <p className="text-xs text-gray-300 font-medium mb-1 truncate">
-                      {message.sender}
-                    </p>
-                  )}
-                  <p className="text-sm break-words">{message.text}</p>
-                  <p
-                    className={`text-xs mt-1 ${
-                      message.isOwn ? "text-yellow-200" : "text-gray-400"
+                  <div
+                    className={`max-w-[85%] md:max-w-xs lg:max-w-md px-3 py-2 md:px-4 md:py-2 rounded-2xl ${
+                      message.isOwn
+                        ? "bg-yellow-600 text-white rounded-br-none"
+                        : "bg-gray-700 text-white rounded-bl-none"
                     }`}
                   >
-                    {formatTime(message.timestamp)}
-                  </p>
+                    {!message.isOwn && (
+                      <p className="text-xs text-gray-300 font-medium mb-1 truncate">
+                        {message.sender}
+                      </p>
+                    )}
+                    <p className="text-sm break-words">{message.text}</p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        message.isOwn ? "text-yellow-200" : "text-gray-400"
+                      }`}
+                    >
+                      {formatTime(message.timestamp)}
+                    </p>
+                  </div>
+
+                  {/* Message actions */}
+                  {(message.isOwn || isCurrentUserAdmin) && (
+                    <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 rounded-lg shadow-lg p-1">
+                      <button
+                        onClick={() => handleDeleteMessage(message.id)}
+                        className="text-red-400 hover:text-red-500 p-1"
+                        title="Delete message"
+                      >
+                        <FaTrash size={12} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              ))
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -460,11 +574,12 @@ const ChatInterface = ({ groupId, onBack }: ChatInterfaceProps) => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
                 className="flex-1 bg-gray-700 text-white px-3 md:px-4 py-2 md:py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm md:text-base min-w-0"
+                disabled={!isConnected}
               />
 
               <button
                 type="submit"
-                disabled={!newMessage.trim()}
+                disabled={!newMessage.trim() || !isConnected}
                 className="bg-yellow-600 text-white p-2 md:p-3 rounded-full hover:bg-yellow-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 <FaPaperPlane size={14} />

@@ -1,6 +1,7 @@
 // components/Profile/Profile.tsx
 import { useContext, useState, useRef } from "react";
 import { updateProfile } from "firebase/auth";
+import { useNavigate } from "react-router";
 import {
   FaEdit,
   FaSave,
@@ -9,14 +10,17 @@ import {
   FaEnvelope,
   FaPhone,
   FaCamera,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { AuthContext } from "../../../../contexts/AuthContext";
 
 const Profile = () => {
   const auth = useContext(AuthContext);
   const user = auth?.user ?? null;
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,6 +30,21 @@ const Profile = () => {
     phoneNumber: user?.phoneNumber || "",
     photoURL: user?.photoURL || "",
   });
+
+  // Handle logout
+  const handleLogout = async () => {
+    if (!auth?.logOut) return;
+
+    setLogoutLoading(true);
+    try {
+      await auth.logOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    } finally {
+      setLogoutLoading(false);
+    }
+  };
 
   // Handle camera icon click
   const handleCameraClick = () => {
@@ -97,33 +116,46 @@ const Profile = () => {
       <div className="p-6 border-b border-gray-700 bg-gray-900">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Profile</h1>
-          {!isEditing ? (
+          <div className="flex items-center space-x-2">
+            {/* Logout Button - Always visible */}
             <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center space-x-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors"
+              onClick={handleLogout}
+              disabled={logoutLoading}
+              className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
-              <FaEdit size={16} />
-              <span>Edit Profile</span>
+              <FaSignOutAlt size={16} />
+              <span>{logoutLoading ? "Logging out..." : "Logout"}</span>
             </button>
-          ) : (
-            <div className="flex space-x-2">
+
+            {/* Edit/Save/Cancel Buttons */}
+            {!isEditing ? (
               <button
-                onClick={handleCancel}
-                className="flex items-center space-x-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+                onClick={() => setIsEditing(true)}
+                className="flex items-center space-x-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
-                <FaTimes size={16} />
-                <span>Cancel</span>
+                <FaEdit size={16} />
+                <span>Edit Profile</span>
               </button>
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className="flex items-center space-x-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-              >
-                <FaSave size={16} />
-                <span>{loading ? "Saving..." : "Save"}</span>
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleCancel}
+                  className="flex items-center space-x-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  <FaTimes size={16} />
+                  <span>Cancel</span>
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="flex items-center space-x-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  <FaSave size={16} />
+                  <span>{loading ? "Saving..." : "Save"}</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

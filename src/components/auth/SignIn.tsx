@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import loginLottie from "../../assets/animation/loginlottiee.json";
 import Lottie from "lottie-react";
 import { Link, useNavigate } from "react-router";
@@ -21,9 +21,11 @@ const SignIn = () => {
   }
 
   const { setUser, logOut, userLogin, loading, setLoading, user } = authContext;
-  if (user) {
-    navigate("/main");
-  }
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/main");
+    }
+  }, [user, loading, navigate]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

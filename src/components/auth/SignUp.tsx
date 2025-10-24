@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import signupLottie from "../../assets/animation/loginlottiee.json";
 import Lottie from "lottie-react";
 import { Link, useNavigate } from "react-router";
@@ -38,10 +38,12 @@ const SignUp = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { createNewUser, setUser, user } = authContext;
-  if (user) {
-    navigate("/main");
-  }
+  const { createNewUser, user, loading } = authContext;
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/main");
+    }
+  }, [user, loading, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -126,10 +128,10 @@ const SignUp = () => {
 
         return updateProfile(auth.currentUser!, profile).then(() => {
           console.log("✅ Profile updated");
-          setUser({
-            ...registeredUser,
-            displayName: formData.name,
-          });
+          // setUser({
+          //   ...registeredUser,
+          //   displayName: formData.name,
+          // });
 
           // Send email verification with configuration
           console.log("🔄 Sending email verification...");
