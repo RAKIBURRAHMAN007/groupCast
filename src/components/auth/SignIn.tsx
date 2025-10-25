@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import loginLottie from "../../assets/animation/loginlottiee.json";
 import Lottie from "lottie-react";
 import { Link, useNavigate } from "react-router";
@@ -20,12 +20,7 @@ const SignIn = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { setUser, logOut, userLogin, loading, setLoading, user } = authContext;
-  useEffect(() => {
-    if (!loading && user) {
-      navigate("/main");
-    }
-  }, [user, loading, navigate]);
+  const { setUser, logOut, userLogin, loading, setLoading } = authContext;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

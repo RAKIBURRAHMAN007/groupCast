@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import signupLottie from "../../assets/animation/loginlottiee.json";
 import Lottie from "lottie-react";
 import { Link, useNavigate } from "react-router";
@@ -38,12 +38,7 @@ const SignUp = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { createNewUser, user, loading } = authContext;
-  useEffect(() => {
-    if (!loading && user) {
-      navigate("/main");
-    }
-  }, [user, loading, navigate]);
+  const { createNewUser } = authContext;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
